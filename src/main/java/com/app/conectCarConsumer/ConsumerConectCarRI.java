@@ -15,7 +15,7 @@ public class ConsumerConectCarRI implements MessageListener {
         if (message instanceof BytesMessage) {
             try {
                 LogAuditCollection logAuditCollection = new LogAuditCollection();
-                logAuditCollection.setIdConcessionaria("1012");
+                logAuditCollection.setIdConcessionaria("1024");
                 logAuditCollection.setIdOsa("3");
                 logAuditCollection.setIdTipoFluxo("6");
                 logAuditCollection.setIdPassofluxo("0");
@@ -24,7 +24,7 @@ public class ConsumerConectCarRI implements MessageListener {
                 logAuditCollection.setDsMensagem(((BytesMessage) message).readUTF());
                 logAuditCollection.setSequencial("0");
                 LogAuditSender.sendToQueue(logAuditCollection);
-                SendMessageFactory.sendToQueue((BytesMessage) message, "RequisitaImagemLocalOSA31012");
+                SendMessageFactory.sendToQueue((BytesMessage) message, "RequisitaImagemLocalOSA31024");
             } catch (Exception e) {
                 e.printStackTrace();
             }

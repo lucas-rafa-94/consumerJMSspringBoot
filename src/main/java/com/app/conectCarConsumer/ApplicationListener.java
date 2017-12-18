@@ -12,19 +12,23 @@ import java.util.concurrent.*;
 @Configuration
 public class ApplicationListener {
     private static final Log logger = LogFactory.getFactory().getInstance(ApplicationListener.class);
-    private ExecutorService executor = null;
+    private static ExecutorService executor;
+    private static  FutureTask<String> futureTask;
+
 
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() {
         System.out.println();
         MyCallable callable = new MyCallable(1000);
-        FutureTask<String> futureTask = new FutureTask<String>(callable);
+        futureTask = new FutureTask<String>(callable);
         executor = Executors.newFixedThreadPool(1);
         executor.execute(futureTask);
+
   }
     @PreDestroy
     public void onExit() {
         logger.info("Encerrando Aplicacao Consumer...");
+        futureTask.cancel(true);
         executor.shutdownNow();
     }
 }

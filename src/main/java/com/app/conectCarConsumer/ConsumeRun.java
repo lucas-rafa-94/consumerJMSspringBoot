@@ -38,24 +38,24 @@ public class ConsumeRun{
    public void run(){
         {
             try {
-                logger.info("Initializing...................");
+                logger.info("Initializing Aplicacao Consumer...................");
                 jmsServerConnection = jmsServerProperites.get("OSA3");
-                username = jmsProperites.get("PassagemProcessadaRemoteOSA31012").getUsername();
-                password = jmsProperites.get("PassagemProcessadaRemoteOSA31012").getPassword();
-                jmsConnectionFactoryContext = jmsProperites.get("PassagemProcessadaRemoteOSA31012").getJmsFactory();
+                username = jmsProperites.get("PassagemProcessadaRemoteOSA31024").getUsername();
+                password = jmsProperites.get("PassagemProcessadaRemoteOSA31024").getPassword();
+                jmsConnectionFactoryContext = jmsProperites.get("PassagemProcessadaRemoteOSA31024").getJmsFactory();
                 connectionFactory = consumer.connectionFactory(jmsServerConnection, username, password, jmsConnectionFactoryContext);
 
                 Runnable passagemProcessadaConsumer = () -> {
-                    jmsConnectionFactory = jmsProperites.get("PassagemProcessadaRemoteOSA31012");
-                    consumer.startConnectionFactory("PassagemProcessadaRemoteOSA31012", jmsConnectionFactory, connectionFactory);
+                    jmsConnectionFactory = jmsProperites.get("PassagemProcessadaRemoteOSA31024");
+                    consumer.startConnectionFactory("PassagemProcessadaRemoteOSA31024", jmsConnectionFactory, connectionFactory);
                 };
                 Runnable requisitaImagemConsumer = () -> {
-                    jmsConnectionFactory = jmsProperites.get("RequisitaImagemRemoteOSA31012");
-                    consumer.startConnectionFactory("RequisitaImagemRemoteOSA31012", jmsConnectionFactory, connectionFactory);
+                    jmsConnectionFactory = jmsProperites.get("RequisitaImagemRemoteOSA31024");
+                    consumer.startConnectionFactory("RequisitaImagemRemoteOSA31024", jmsConnectionFactory, connectionFactory);
                 };
                 Runnable falhaConsumer = () -> {
-                    jmsConnectionFactory = jmsProperites.get("FalhaComunicacaoRemoteOSA31012");
-                    consumer.startConnectionFactory("FalhaComunicacaoRemoteOSA31012", jmsConnectionFactory, connectionFactory);
+                    jmsConnectionFactory = jmsProperites.get("FalhaComunicacaoRemoteOSA31024");
+                    consumer.startConnectionFactory("FalhaComunicacaoRemoteOSA31024", jmsConnectionFactory, connectionFactory);
                 };
 
                 passagemProcessadaConsumer.run();

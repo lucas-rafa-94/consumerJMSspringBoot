@@ -34,14 +34,14 @@ public class ConsumerImpl {
             Destination destination = (Destination) context.lookup(jmsConnectionFactory.getJmsQueue());
 
             connection = connectionFactory.createConnection(System.getProperty("username", jmsConnectionFactory.getUsername()), System.getProperty("password", jmsConnectionFactory.getPassword()));
-            connection.setClientID(fluxo + "autoban");
+            connection.setClientID(fluxo + "clientId");
 
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             topicSubscriber = session.createDurableSubscriber((Topic) destination, CONECTCAR_EXTERNAL_CLIENT);
 
-            if (fluxo.equals("PassagemProcessadaRemoteOSA31012")) {
+            if (fluxo.equals("PassagemProcessadaRemoteOSA31024")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarPP());
-            } else if (fluxo.equals("RequisitaImagemRemoteOSA31012")) {
+            } else if (fluxo.equals("RequisitaImagemRemoteOSA31024")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarRI());
             } else {
                 topicSubscriber.setMessageListener(new ConsumerConectCarFC());
@@ -130,6 +130,7 @@ public class ConsumerImpl {
         }catch (Exception e){
             ConsumerImpl consumer = new ConsumerImpl();
             log.error("Erro na Conexao " + jmsServerConnection.getUrl() + " motivo erro " + e.getMessage());
+            e.printStackTrace();
             log.info("Conexao " + jmsServerConnection.getUrl() + " com problemas! Re-tentativa de conexao em 9000 milisegundos ");
             try {
                 Thread.sleep(9000);
