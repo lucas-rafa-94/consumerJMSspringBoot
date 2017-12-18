@@ -17,6 +17,9 @@ public class ConsumerImpl {
 
     private static Properties env =null;
     public static Context context;
+    private static Connection connection = null;
+    private static Session session = null;
+    private static TopicSubscriber topicSubscriber = null;
 
     private static final Log log = LogFactory.getFactory().getInstance(SendMessageFactory.class);
 
@@ -24,11 +27,8 @@ public class ConsumerImpl {
 
     public static void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, ConnectionFactory connectionFactory){
 
-        Connection connection = null;
-        Session session = null;
-        TopicSubscriber topicSubscriber = null;
-
         try {
+
             log.info("Conectando " + fluxo + " | fila: " + jmsConnectionFactory.getJmsQueue());
 
             Destination destination = (Destination) context.lookup(jmsConnectionFactory.getJmsQueue());
@@ -83,6 +83,32 @@ public class ConsumerImpl {
                 }
             }
         }
+    }
+
+    public static void stopConnection(){
+
+        if (session != null) {
+            try {
+                session.close();
+            } catch (JMSException e1) {
+                log.error("Erro ao fechar sessao  motivo erro " + e1.getMessage());
+            }
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (JMSException e2) {
+                log.error("Erro ao fechar conexao motivo erro " + e2.getMessage());
+            }
+        }
+        if (topicSubscriber != null) {
+            try {
+                topicSubscriber.close();
+            } catch (JMSException e3) {
+                log.error("Erro ao fechar conexao  motivo erro " + e3.getMessage());
+            }
+        }
+
     }
 
     public static ConnectionFactory connectionFactory(JmsServerConnection jmsServerConnection, String username, String password, String jmsConnectionFactoryContext) {

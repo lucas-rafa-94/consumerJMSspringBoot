@@ -15,11 +15,12 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.jms.ConnectionFactory;
 import java.util.HashMap;
 
 
-
+@Component
 public class ConsumeRun{
 
     private static final Log logger = LogFactory.getFactory().getInstance(ConsumeRun.class);
@@ -28,17 +29,16 @@ public class ConsumeRun{
     private static HashMap<String, JmsServerConnection> jmsServerProperites = GetProperties.getServerProperties();
     private static HashMap<String, JmsConnectionFactory> jmsProperites = GetProperties.getProperties();
     private static ConnectionFactory connectionFactory = null;
-    private static ConsumerImpl consumer = null;
     private static String username = null;
     private static String password = null;
     private static String jmsConnectionFactoryContext = null;
+    private static ConsumerImpl consumer = new ConsumerImpl();
 
 
    public void run(){
         {
             try {
                 logger.info("Initializing...................");
-                ConsumerImpl consumer = new ConsumerImpl();
                 jmsServerConnection = jmsServerProperites.get("OSA3");
                 username = jmsProperites.get("PassagemProcessadaRemoteOSA31012").getUsername();
                 password = jmsProperites.get("PassagemProcessadaRemoteOSA31012").getPassword();
@@ -65,5 +65,11 @@ public class ConsumeRun{
                 logger.error("Erro ao inicializacao aplicacao - Motivo " + e.getMessage());
             }
         }
+    }
+
+    @PreDestroy
+    public void onExit() {
+        logger.info("Fechando todas as conexoes");
+        consumer.stopConnection();
     }
 }
