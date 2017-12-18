@@ -7,6 +7,9 @@ import com.app.conectCarConsumer.ConsumerConectCarPP;
 import com.app.conectCarConsumer.ConsumerConectCarRI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hornetq.jms.client.HornetQConnection;
+import org.hornetq.jms.client.HornetQConnectionFactory;
+import org.hornetq.jms.client.HornetQSession;
 
 import javax.jms.*;
 import javax.naming.Context;
@@ -16,16 +19,16 @@ import java.util.Properties;
 public class ConsumerImpl {
 
     private static Properties env =null;
-    public static Context context;
-    private static Connection connection = null;
-    private static Session session = null;
+    public static  Context context;
+    private static HornetQConnection connection = null;
+    private static HornetQSession session = null;
     private static TopicSubscriber topicSubscriber = null;
 
     private static final Log log = LogFactory.getFactory().getInstance(SendMessageFactory.class);
 
     private static final String CONECTCAR_EXTERNAL_CLIENT = "conectcar-external-client";
 
-    public static void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, ConnectionFactory connectionFactory){
+    public static void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, HornetQConnectionFactory connectionFactory){
 
         try {
 
@@ -33,10 +36,10 @@ public class ConsumerImpl {
 
             Destination destination = (Destination) context.lookup(jmsConnectionFactory.getJmsQueue());
 
-            connection = connectionFactory.createConnection(System.getProperty("username", jmsConnectionFactory.getUsername()), System.getProperty("password", jmsConnectionFactory.getPassword()));
+            connection = (HornetQConnection) connectionFactory.createConnection(System.getProperty("username", jmsConnectionFactory.getUsername()), System.getProperty("password", jmsConnectionFactory.getPassword()));
             connection.setClientID(fluxo + "clientId");
 
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            session = (HornetQSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             topicSubscriber = session.createDurableSubscriber((Topic) destination, CONECTCAR_EXTERNAL_CLIENT);
 
             if (fluxo.equals("PassagemProcessadaRemoteConc1024OSA3")) {
@@ -111,9 +114,9 @@ public class ConsumerImpl {
 
     }
 
-    public static ConnectionFactory connectionFactory(JmsServerConnection jmsServerConnection, String username, String password, String jmsConnectionFactoryContext) {
+    public static HornetQConnectionFactory connectionFactory(JmsServerConnection jmsServerConnection, String username, String password, String jmsConnectionFactoryContext) {
 
-        ConnectionFactory connectionFactory = null;
+        HornetQConnectionFactory connectionFactory = null;
 
         env = new Properties();
         env.put(Context.INITIAL_CONTEXT_FACTORY, jmsServerConnection.getContextFactory());
@@ -126,7 +129,7 @@ public class ConsumerImpl {
         try {
             context = new InitialContext(env);
             connectionFactory =
-                    (ConnectionFactory) context.lookup(jmsConnectionFactoryContext);
+                    (HornetQConnectionFactory) context.lookup(jmsConnectionFactoryContext);
         }catch (Exception e){
             ConsumerImpl consumer = new ConsumerImpl();
             log.error("Erro na Conexao " + jmsServerConnection.getUrl() + " motivo erro " + e.getMessage());

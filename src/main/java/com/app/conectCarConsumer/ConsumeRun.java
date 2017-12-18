@@ -5,10 +5,10 @@ import com.app.bean.JmsServerConnection;
 import com.app.helper.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
-import javax.jms.ConnectionFactory;
 import java.util.HashMap;
 
 
@@ -20,7 +20,7 @@ public class ConsumeRun{
     private static JmsServerConnection jmsServerConnection = null;
     private static HashMap<String, JmsServerConnection> jmsServerProperites = GetProperties.getServerProperties();
     private static HashMap<String, JmsConnectionFactory> jmsProperites = GetProperties.getProperties();
-    private static ConnectionFactory connectionFactory = null;
+    private static HornetQConnectionFactory connectionFactory = null;
     private static String username = null;
     private static String password = null;
     private static String jmsConnectionFactoryContext = null;
