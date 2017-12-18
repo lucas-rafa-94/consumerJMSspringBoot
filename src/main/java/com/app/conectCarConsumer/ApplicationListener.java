@@ -18,7 +18,6 @@ public class ApplicationListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() {
-        System.out.println();
         MyCallable callable = new MyCallable(1000);
         futureTask = new FutureTask<String>(callable);
         executor = Executors.newFixedThreadPool(1);

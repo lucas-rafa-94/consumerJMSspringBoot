@@ -16,9 +16,9 @@ public class GetProperties {
         HashMap<String, JmsConnectionFactory> jmsProperites = new HashMap<>();
 
         try {
-            String domainHome = System.getenv("DOMAIN_HOME");
-            FileReader fileReader = new FileReader(domainHome + "/config/app/o2MinJndiConnection.properties");
-            //FileReader fileReader = new FileReader( "/Users/lucasdossantos/Desktop/deploy/o2MinJndiConnection.properties");
+            //String domainHome = System.getenv("DOMAIN_HOME");
+            //FileReader fileReader = new FileReader(domainHome + "/config/app/o2MinJndiConnection.properties");
+            FileReader fileReader = new FileReader( "/Users/lucasdossantos/Desktop/deploy/o2MinJndiConnection.properties");
             BufferedReader br = new BufferedReader(fileReader);
             String linha = br.readLine();
             String resultado = "";
@@ -44,9 +44,9 @@ public class GetProperties {
         HashMap<String, JmsServerConnection> jmsServerProperites = new HashMap<>();
 
         try {
-            String domainHome = System.getenv("DOMAIN_HOME");
-            FileReader fileReader = new FileReader(domainHome + "/config/app/o2MinJndiConnection.properties");
-            //FileReader fileReader = new FileReader( "/Users/lucasdossantos/Desktop/deploy/o2MinConnectionServerJms.properties");
+            //String domainHome = System.getenv("DOMAIN_HOME");
+            //FileReader fileReader = new FileReader(domainHome + "/config/app/o2MinJndiConnection.properties");
+            FileReader fileReader = new FileReader( "/Users/lucasdossantos/Desktop/deploy/o2MinConnectionServerJms.properties");
             BufferedReader br = new BufferedReader(fileReader);
             String linha = br.readLine();
             String resultado = "";

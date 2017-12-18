@@ -39,9 +39,9 @@ public class ConsumerImpl {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             topicSubscriber = session.createDurableSubscriber((Topic) destination, CONECTCAR_EXTERNAL_CLIENT);
 
-            if (fluxo.equals("PassagemProcessadaRemoteOSA31024")) {
+            if (fluxo.equals("PassagemProcessadaRemoteConc1024OSA3")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarPP());
-            } else if (fluxo.equals("RequisitaImagemRemoteOSA31024")) {
+            } else if (fluxo.equals("RequisitaImagemRemotConc1024OSA3")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarRI());
             } else {
                 topicSubscriber.setMessageListener(new ConsumerConectCarFC());

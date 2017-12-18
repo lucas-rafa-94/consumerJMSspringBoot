@@ -24,7 +24,7 @@ public class ConsumerConectCarPP implements MessageListener {
                 logAuditCollection.setDsMensagem(((BytesMessage) message).readUTF());
                 logAuditCollection.setSequencial("0");
                 LogAuditSender.sendToQueue(logAuditCollection);
-                SendMessageFactory.sendToQueue((BytesMessage) message, "PassagemProcessadaLocalOSA31024");
+                SendMessageFactory.sendToQueue((BytesMessage) message, "PassagemProcessadaLocalConc1024OSA3");
             } catch (Exception e) {
                 e.printStackTrace();
             }
