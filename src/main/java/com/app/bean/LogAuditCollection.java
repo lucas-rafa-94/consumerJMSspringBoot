@@ -1,4 +1,4 @@
-package com.autoban.logAudit;
+package com.app.bean;
 
 public class LogAuditCollection {
 

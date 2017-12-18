@@ -1,8 +1,10 @@
-package com.autoban.helper;
+package com.app.helper;
 
-import com.autoban.conectCarConsumer.ConsumerConectCarFC;
-import com.autoban.conectCarConsumer.ConsumerConectCarPP;
-import com.autoban.conectCarConsumer.ConsumerConectCarRI;
+import com.app.bean.JmsConnectionFactory;
+import com.app.bean.JmsServerConnection;
+import com.app.conectCarConsumer.ConsumerConectCarFC;
+import com.app.conectCarConsumer.ConsumerConectCarPP;
+import com.app.conectCarConsumer.ConsumerConectCarRI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

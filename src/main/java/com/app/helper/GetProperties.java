@@ -1,6 +1,8 @@
-package com.autoban.helper;
+package com.app.helper;
 
 
+import com.app.bean.JmsConnectionFactory;
+import com.app.bean.JmsServerConnection;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;

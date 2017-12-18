@@ -1,4 +1,4 @@
-package com.autoban.errorHandler;
+package com.app.bean;
 
 public class LogErroCollection {
 

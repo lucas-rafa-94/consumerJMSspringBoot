@@ -1,6 +1,7 @@
-package com.autoban.errorHandler;
+package com.app.logErro;
 
-import com.autoban.helper.StringUtil;
+import com.app.bean.LogErroCollection;
+import com.app.helper.StringUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.DOMException;

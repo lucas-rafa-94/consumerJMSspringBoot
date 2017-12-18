@@ -1,7 +1,9 @@
-package com.autoban.helper;
+package com.app.helper;
 
-import com.autoban.errorHandler.ErrorHandlerSender;
-import com.autoban.errorHandler.LogErroCollection;
+import com.app.bean.JmsConnectionFactory;
+import com.app.bean.JmsServerConnection;
+import com.app.logErro.ErrorHandlerSender;
+import com.app.bean.LogErroCollection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

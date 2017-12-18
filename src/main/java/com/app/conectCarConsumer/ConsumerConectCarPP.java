@@ -1,9 +1,9 @@
-package com.autoban.conectCarConsumer;
+package com.app.conectCarConsumer;
 
-import com.autoban.helper.SendMessageFactory;
-import com.autoban.helper.StringUtil;
-import com.autoban.logAudit.LogAuditCollection;
-import com.autoban.logAudit.LogAuditSender;
+import com.app.helper.SendMessageFactory;
+import com.app.helper.StringUtil;
+import com.app.bean.LogAuditCollection;
+import com.app.logAudit.LogAuditSender;
 
 
 import javax.jms.BytesMessage;

@@ -1,7 +1,7 @@
-package com.autoban.logAudit;
+package com.app.logAudit;
 
-import com.autoban.errorHandler.LogErroCollection;
-import com.autoban.helper.StringUtil;
+import com.app.bean.LogAuditCollection;
+import com.app.helper.StringUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.DOMException;
@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class CreateSoapMessage    {
 
-    private static final Log log = LogFactory.getFactory().getInstance(com.autoban.errorHandler.CreateSoapMessage.class);
+    private static final Log log = LogFactory.getFactory().getInstance(com.app.logErro.CreateSoapMessage.class);
 
         public static String returnMessage(LogAuditCollection logAuditCollection) {
             String message = null;

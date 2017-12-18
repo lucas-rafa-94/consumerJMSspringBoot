@@ -1,4 +1,4 @@
-package com.autoban.helper;
+package com.app.bean;
 
 
 public class JmsConnectionFactory {

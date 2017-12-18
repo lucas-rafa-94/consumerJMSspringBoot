@@ -1,9 +1,10 @@
-package com.autoban.logAudit;
+package com.app.logAudit;
 
 
-import com.autoban.errorHandler.ErrorHandlerSender;
-import com.autoban.helper.GetProperties;
-import com.autoban.helper.JmsServerConnection;
+import com.app.bean.LogAuditCollection;
+import com.app.logErro.ErrorHandlerSender;
+import com.app.helper.GetProperties;
+import com.app.bean.JmsServerConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,7 +47,7 @@ public class LogAuditSender {
                     ctx = new InitialContext(env);
                 }
 
-                String mensagem = com.autoban.logAudit.CreateSoapMessage.returnMessage(logAuditCollection);
+                String mensagem = com.app.logAudit.CreateSoapMessage.returnMessage(logAuditCollection);
 
                 if (mensagem != null) {
                     connectionFactory = (ConnectionFactory) ctx.lookup(CONNECTION_FACTORY);

@@ -1,4 +1,4 @@
-package com.autoban.helper;
+package com.app.helper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
