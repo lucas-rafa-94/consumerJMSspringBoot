@@ -7,22 +7,27 @@ import com.app.conectCarConsumer.ConsumerConectCarPP;
 import com.app.conectCarConsumer.ConsumerConectCarRI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hornetq.api.core.TransportConfiguration;
+import org.hornetq.api.jms.HornetQJMSClient;
+import org.hornetq.api.jms.JMSFactoryType;
+import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.jms.client.HornetQConnection;
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.hornetq.jms.client.HornetQSession;
+import org.hornetq.jms.client.HornetQTopic;
 
 import javax.jms.*;
 import javax.naming.Context;
-import javax.naming.InitialContext;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class ConsumerImpl {
 
-    private static Properties env =null;
-    public static  Context context;
     private static HornetQConnection connection = null;
     private static HornetQSession session = null;
     private static TopicSubscriber topicSubscriber = null;
+    private static HornetQTopic topic = null;
 
     private static final Log log = LogFactory.getFactory().getInstance(SendMessageFactory.class);
 
@@ -34,13 +39,13 @@ public class ConsumerImpl {
 
             log.info("Conectando " + fluxo + " | fila: " + jmsConnectionFactory.getJmsQueue());
 
-            Destination destination = (Destination) context.lookup(jmsConnectionFactory.getJmsQueue());
-
-            connection = (HornetQConnection) connectionFactory.createConnection(System.getProperty("username", jmsConnectionFactory.getUsername()), System.getProperty("password", jmsConnectionFactory.getPassword()));
+            connection = (HornetQConnection) connectionFactory.createConnection(jmsConnectionFactory.getUsername(), jmsConnectionFactory.getPassword());
             connection.setClientID(fluxo + "clientId");
+            connection.start();
 
             session = (HornetQSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            topicSubscriber = session.createDurableSubscriber((Topic) destination, CONECTCAR_EXTERNAL_CLIENT);
+            topic = (HornetQTopic) session.createTopic(jmsConnectionFactory.getJmsQueue());
+            topicSubscriber = session.createDurableSubscriber(topic, CONECTCAR_EXTERNAL_CLIENT);
 
             if (fluxo.equals("PassagemProcessadaRemoteConc1024OSA3")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarPP());
@@ -114,22 +119,18 @@ public class ConsumerImpl {
 
     }
 
-    public static HornetQConnectionFactory connectionFactory(JmsServerConnection jmsServerConnection, String username, String password, String jmsConnectionFactoryContext) {
+    public static HornetQConnectionFactory connectionFactory(JmsServerConnection jmsServerConnection) {
 
+        Map<String, Object> connectionParams = new HashMap<String, Object>();
+        TransportConfiguration transportConfiguration = null;
         HornetQConnectionFactory connectionFactory = null;
 
-        env = new Properties();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, jmsServerConnection.getContextFactory());
-        env.put(Context.PROVIDER_URL, jmsServerConnection.getUrl());
-        env.put(Context.SECURITY_PRINCIPAL, username);
-        env.put(Context.SECURITY_CREDENTIALS, password);
-        env.put("jboss.naming.client.ejb.context", true);
-        env.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
-        env.put("invocation.timeout", 3000);
+        connectionParams.put(org.hornetq.core.remoting.impl.netty.TransportConstants.PORT_PROP_NAME, jmsServerConnection.getUrl().split(":")[1]);
+        connectionParams.put(org.hornetq.core.remoting.impl.netty.TransportConstants.HOST_PROP_NAME, jmsServerConnection.getUrl().split(":")[0]);
+
         try {
-            context = new InitialContext(env);
-            connectionFactory =
-                    (HornetQConnectionFactory) context.lookup(jmsConnectionFactoryContext);
+            transportConfiguration = new TransportConfiguration(NettyConnectorFactory.class.getName(), connectionParams);
+            connectionFactory = HornetQJMSClient.createConnectionFactoryWithHA(JMSFactoryType.CF, transportConfiguration);
         }catch (Exception e){
             ConsumerImpl consumer = new ConsumerImpl();
             log.error("Erro na Conexao " + jmsServerConnection.getUrl() + " motivo erro " + e.getMessage());
@@ -141,7 +142,7 @@ public class ConsumerImpl {
                 log.error("Erro na Conexao " + jmsServerConnection.getUrl() + " motivo erro " + e.getMessage());
                 log.error("Aplicaçao sera fechada!");
             }
-            consumer.connectionFactory(jmsServerConnection, username, password, jmsConnectionFactoryContext );
+            consumer.connectionFactory(jmsServerConnection);
         }
         return connectionFactory;
     }

@@ -21,9 +21,6 @@ public class ConsumeRun{
     private static HashMap<String, JmsServerConnection> jmsServerProperites = GetProperties.getServerProperties();
     private static HashMap<String, JmsConnectionFactory> jmsProperites = GetProperties.getProperties();
     private static HornetQConnectionFactory connectionFactory = null;
-    private static String username = null;
-    private static String password = null;
-    private static String jmsConnectionFactoryContext = null;
     private static ConsumerImpl consumer = new ConsumerImpl();
 
 
@@ -32,10 +29,7 @@ public class ConsumeRun{
             try {
                 logger.info("Initializing Aplicacao Consumer...................");
                 jmsServerConnection = jmsServerProperites.get("OSA3");
-                username = jmsProperites.get("PassagemProcessadaRemoteConc1024OSA3").getUsername();
-                password = jmsProperites.get("PassagemProcessadaRemoteConc1024OSA3").getPassword();
-                jmsConnectionFactoryContext = jmsProperites.get("PassagemProcessadaRemoteConc1024OSA3").getJmsFactory();
-                connectionFactory = consumer.connectionFactory(jmsServerConnection, username, password, jmsConnectionFactoryContext);
+                connectionFactory = consumer.connectionFactory(jmsServerConnection);
 
                 Runnable passagemProcessadaConsumer = () -> {
                     jmsConnectionFactory = jmsProperites.get("PassagemProcessadaRemoteConc1024OSA3");

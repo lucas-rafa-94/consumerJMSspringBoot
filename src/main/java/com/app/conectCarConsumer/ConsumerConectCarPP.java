@@ -14,7 +14,7 @@ public class ConsumerConectCarPP implements MessageListener {
     public void onMessage(Message message) {
         if (message instanceof BytesMessage) {
             try {
-                LogAuditCollection logAuditCollection = new LogAuditCollection();
+              /*  LogAuditCollection logAuditCollection = new LogAuditCollection();
                 logAuditCollection.setIdConcessionaria("1024");
                 logAuditCollection.setIdOsa("3");
                 logAuditCollection.setIdTipoFluxo("5");
@@ -24,7 +24,9 @@ public class ConsumerConectCarPP implements MessageListener {
                 logAuditCollection.setDsMensagem(((BytesMessage) message).readUTF());
                 logAuditCollection.setSequencial("0");
                 LogAuditSender.sendToQueue(logAuditCollection);
-                SendMessageFactory.sendToQueue((BytesMessage) message, "PassagemProcessadaLocalConc1024OSA3");
+                */
+                //SendMessageFactory.sendToQueue((BytesMessage) message, "PassagemProcessadaLocalConc1024OSA3");
+                System.out.println(message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
