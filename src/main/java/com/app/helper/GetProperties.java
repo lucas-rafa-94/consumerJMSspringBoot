@@ -4,6 +4,8 @@ package com.app.helper;
 import com.app.bean.JmsConnectionFactory;
 import com.app.bean.JmsServerConnection;
 import com.google.gson.Gson;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,14 +13,15 @@ import java.util.HashMap;
 
 public class GetProperties {
 
-    public static HashMap<String, JmsConnectionFactory> getProperties() {
+    private static final Log log = LogFactory.getFactory().getInstance(GetProperties.class);
+
+    public static HashMap<String, JmsConnectionFactory> getProperties(){
 
         HashMap<String, JmsConnectionFactory> jmsProperites = new HashMap<>();
 
         try {
-            //String domainHome = System.getenv("DOMAIN_HOME");
-            //FileReader fileReader = new FileReader(domainHome + "/config/app/o2MinJndiConnection.properties");
-            FileReader fileReader = new FileReader( "/Users/lucasdossantos/Desktop/deploy/o2MinJndiConnection.properties");
+
+            FileReader fileReader = new FileReader("/u01/oracle/domains/ccr_osbgtw_domain/config/app/o2MinJndiConnection.properties");
             BufferedReader br = new BufferedReader(fileReader);
             String linha = br.readLine();
             String resultado = "";
@@ -31,11 +34,12 @@ public class GetProperties {
                 resultado += linha;
                 linha = br.readLine();
             }
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao ler properties  o2MinConnectionServerJms " + e.getMessage());
+
         }
         return jmsProperites;
-
     }
 
 
@@ -44,9 +48,8 @@ public class GetProperties {
         HashMap<String, JmsServerConnection> jmsServerProperites = new HashMap<>();
 
         try {
-            //String domainHome = System.getenv("DOMAIN_HOME");
-            //FileReader fileReader = new FileReader(domainHome + "/config/app/o2MinJndiConnection.properties");
-            FileReader fileReader = new FileReader( "/Users/lucasdossantos/Desktop/deploy/o2MinConnectionServerJms.properties");
+
+            FileReader fileReader = new FileReader("/u01/oracle/domains/ccr_osbgtw_domain/config/app/o2MinConnectionServerJms.properties");
             BufferedReader br = new BufferedReader(fileReader);
             String linha = br.readLine();
             String resultado = "";
@@ -59,9 +62,14 @@ public class GetProperties {
                 resultado += linha;
                 linha = br.readLine();
             }
+
+
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao ler properties  o2MinConnectionServerJms " + e.getMessage());
+
         }
+
         return jmsServerProperites;
     }
 }

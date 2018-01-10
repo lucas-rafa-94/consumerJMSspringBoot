@@ -83,7 +83,7 @@ public class SendMessageFactory {
             logErroCollection.setReprocessado("10");
             logErroCollection.setSequencial("0");
             logErroCollection.setIdOsa("3");
-            logErroCollection.setIdConcessionaria(fluxo.split("OSA3")[1]);
+            logErroCollection.setIdConcessionaria(fluxo.split("Conc")[1].replace("OSA3", ""));
 
             log.error("sendToQueue");
             ErrorHandlerSender.sendToQueue(logErroCollection);

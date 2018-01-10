@@ -21,7 +21,7 @@ public class ConsumerConectCarRI implements MessageListener {
                 logAuditCollection.setIdPassofluxo("0");
                 logAuditCollection.setDhmLog(StringUtil.toDateNow());
                 logAuditCollection.setSerie("0");
-                logAuditCollection.setDsMensagem(((BytesMessage) message).readUTF());
+                logAuditCollection.setDsMensagem(message.toString());
                 logAuditCollection.setSequencial("0");
                 LogAuditSender.sendToQueue(logAuditCollection);
                 SendMessageFactory.sendToQueue((BytesMessage) message, "RequisitaImagemLocalConc1024OSA3");

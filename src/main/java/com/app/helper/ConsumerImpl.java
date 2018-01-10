@@ -17,10 +17,8 @@ import org.hornetq.jms.client.HornetQSession;
 import org.hornetq.jms.client.HornetQTopic;
 
 import javax.jms.*;
-import javax.naming.Context;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class ConsumerImpl {
 
@@ -33,7 +31,9 @@ public class ConsumerImpl {
 
     private static final String CONECTCAR_EXTERNAL_CLIENT = "conectcar-external-client";
 
-    public static void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, HornetQConnectionFactory connectionFactory){
+    public static void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, JmsServerConnection jmsServerConnection){
+
+        HornetQConnectionFactory connectionFactory = connectionFactory(jmsServerConnection);
 
         try {
 
@@ -49,7 +49,7 @@ public class ConsumerImpl {
 
             if (fluxo.equals("PassagemProcessadaRemoteConc1024OSA3")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarPP());
-            } else if (fluxo.equals("RequisitaImagemRemotConc1024OSA3")) {
+            } else if (fluxo.equals("RequisitaImagemRemoteConc1024OSA3")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarRI());
             } else {
                 topicSubscriber.setMessageListener(new ConsumerConectCarFC());
@@ -57,18 +57,19 @@ public class ConsumerImpl {
             log.info("Conectado com sucesso  " + fluxo + " | fila: " + jmsConnectionFactory.getJmsQueue());
 
         } catch (javax.jms.IllegalStateException e){
-            ConsumerImpl consumer = new ConsumerImpl();
-            log.info("Conexao " + jmsConnectionFactory.getJmsQueue() + " ja em uso! Re-tentativa de conexao em 9000 milisegundos ");
-            try {
-                Thread.sleep(9000);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-            consumer.startConnectionFactory(fluxo, jmsConnectionFactory, connectionFactory);
+                ConsumerImpl consumer = new ConsumerImpl();
+                log.info("Conexao " + jmsConnectionFactory.getJmsQueue() + " ja em uso! Re-tentativa de conexao em 9000 milisegundos ");
+                try {
+                    Thread.sleep(9000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            consumer.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
 
         } catch (Exception e){
+            ConsumerImpl consumer = new ConsumerImpl();
             log.error("Erro na Conexao " + jmsConnectionFactory.getJmsQueue() + " motivo erro " + e.getMessage());
-            log.error("Conexao  " + jmsConnectionFactory.getJmsQueue() + " sera fechada!");
+            log.error("Conexao  " + jmsConnectionFactory.getJmsQueue() + " sera re-tentada em 9000 milisegundos!");
             if (session != null) {
                 try {
                     session.close();
@@ -90,6 +91,12 @@ public class ConsumerImpl {
                     log.error("Erro ao fechar conexao " + jmsConnectionFactory.getJmsQueue() + " motivo erro " + e3.getMessage());
                 }
             }
+            try {
+                Thread.sleep(9000);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            consumer.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
         }
     }
 

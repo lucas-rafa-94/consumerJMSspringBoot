@@ -20,7 +20,6 @@ public class ConsumeRun{
     private static JmsServerConnection jmsServerConnection = null;
     private static HashMap<String, JmsServerConnection> jmsServerProperites = GetProperties.getServerProperties();
     private static HashMap<String, JmsConnectionFactory> jmsProperites = GetProperties.getProperties();
-    private static HornetQConnectionFactory connectionFactory = null;
     private static ConsumerImpl consumer = new ConsumerImpl();
 
 
@@ -29,19 +28,18 @@ public class ConsumeRun{
             try {
                 logger.info("Initializing Aplicacao Consumer...................");
                 jmsServerConnection = jmsServerProperites.get("OSA3");
-                connectionFactory = consumer.connectionFactory(jmsServerConnection);
 
                 Runnable passagemProcessadaConsumer = () -> {
                     jmsConnectionFactory = jmsProperites.get("PassagemProcessadaRemoteConc1024OSA3");
-                    consumer.startConnectionFactory("PassagemProcessadaRemoteConc1024OSA3", jmsConnectionFactory, connectionFactory);
+                    consumer.startConnectionFactory("PassagemProcessadaRemoteConc1024OSA3", jmsConnectionFactory, jmsServerConnection);
                 };
                 Runnable requisitaImagemConsumer = () -> {
                     jmsConnectionFactory = jmsProperites.get("RequisitaImagemRemoteConc1024OSA3");
-                    consumer.startConnectionFactory("RequisitaImagemRemoteConc1024OSA3", jmsConnectionFactory, connectionFactory);
+                    consumer.startConnectionFactory("RequisitaImagemRemoteConc1024OSA3", jmsConnectionFactory, jmsServerConnection);
                 };
                 Runnable falhaConsumer = () -> {
                     jmsConnectionFactory = jmsProperites.get("FalhaComunicacaoRemoteConc1024OSA3");
-                    consumer.startConnectionFactory("FalhaComunicacaoRemoteConc1024OSA3", jmsConnectionFactory, connectionFactory);
+                    consumer.startConnectionFactory("FalhaComunicacaoRemoteConc1024OSA3", jmsConnectionFactory, jmsServerConnection);
                 };
 
                 passagemProcessadaConsumer.run();
