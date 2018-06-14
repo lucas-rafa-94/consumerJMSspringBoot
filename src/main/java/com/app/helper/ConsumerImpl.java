@@ -15,23 +15,26 @@ import org.hornetq.jms.client.HornetQConnection;
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.hornetq.jms.client.HornetQSession;
 import org.hornetq.jms.client.HornetQTopic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.jms.*;
 import java.util.HashMap;
 import java.util.Map;
-
+@Service
 public class ConsumerImpl {
 
     private static HornetQConnection connection = null;
     private static HornetQSession session = null;
     private static TopicSubscriber topicSubscriber = null;
     private static HornetQTopic topic = null;
-
+    @Autowired
+    ConsumerImpl cons;
     private static final Log log = LogFactory.getFactory().getInstance(SendMessageFactory.class);
 
     private static final String CONECTCAR_EXTERNAL_CLIENT = "conectcar-external-client";
 
-    public static void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, JmsServerConnection jmsServerConnection){
+    public  void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, JmsServerConnection jmsServerConnection){
 
         HornetQConnectionFactory connectionFactory = connectionFactory(jmsServerConnection);
 
@@ -57,17 +60,17 @@ public class ConsumerImpl {
             log.info("Conectado com sucesso  " + fluxo + " | fila: " + jmsConnectionFactory.getJmsQueue());
 
         } catch (javax.jms.IllegalStateException e){
-                ConsumerImpl consumer = new ConsumerImpl();
+
                 log.info("Conexao " + jmsConnectionFactory.getJmsQueue() + " ja em uso! Re-tentativa de conexao em 9000 milisegundos ");
                 try {
                     Thread.sleep(9000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
-            consumer.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
+            cons.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
 
         } catch (Exception e){
-            ConsumerImpl consumer = new ConsumerImpl();
+
             log.error("Erro na Conexao " + jmsConnectionFactory.getJmsQueue() + " motivo erro " + e.getMessage());
             log.error("Conexao  " + jmsConnectionFactory.getJmsQueue() + " sera re-tentada em 9000 milisegundos!");
             if (session != null) {
@@ -96,7 +99,7 @@ public class ConsumerImpl {
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
-            consumer.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
+            cons.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
         }
     }
 
