@@ -15,12 +15,14 @@ import org.hornetq.jms.client.HornetQConnection;
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.hornetq.jms.client.HornetQSession;
 import org.hornetq.jms.client.HornetQTopic;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.jms.*;
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TopicSubscriber;
 import java.util.HashMap;
 import java.util.Map;
+
 @Service
 public class ConsumerImpl {
 
@@ -28,22 +30,24 @@ public class ConsumerImpl {
     private static HornetQSession session = null;
     private static TopicSubscriber topicSubscriber = null;
     private static HornetQTopic topic = null;
-    @Autowired
-    ConsumerImpl cons;
+
     private static final Log log = LogFactory.getFactory().getInstance(SendMessageFactory.class);
 
     private static final String CONECTCAR_EXTERNAL_CLIENT = "conectcar-external-client";
 
-    public  void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, JmsServerConnection jmsServerConnection){
+    public void startConnectionFactory(String fluxo, JmsConnectionFactory jmsConnectionFactory, JmsServerConnection jmsServerConnection) {
 
         HornetQConnectionFactory connectionFactory = connectionFactory(jmsServerConnection);
+        log.info("Found connection factory \"" + connectionFactory + "\" in JNDI");
 
         try {
 
             log.info("Conectando " + fluxo + " | fila: " + jmsConnectionFactory.getJmsQueue());
 
             connection = (HornetQConnection) connectionFactory.createConnection(jmsConnectionFactory.getUsername(), jmsConnectionFactory.getPassword());
+            log.info("Attempting to acquire createconnection \"" + connection + "\"");
             connection.setClientID(fluxo + "clientId");
+            connection.setExceptionListener(new ExceptionHornetQ(fluxo, jmsConnectionFactory, jmsServerConnection));
             connection.start();
 
             session = (HornetQSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -57,22 +61,26 @@ public class ConsumerImpl {
             } else {
                 topicSubscriber.setMessageListener(new ConsumerConectCarFC());
             }
-            log.info("Conectado com sucesso  " + fluxo + " | fila: " + jmsConnectionFactory.getJmsQueue());
+            log.info("Conectado com sucesso  " + fluxo + " | fila: " + jmsConnectionFactory.getJmsQueue() + " topicSubscriber " + topicSubscriber.getTopic().getTopicName());
 
-        } catch (javax.jms.IllegalStateException e){
 
-                log.info("Conexao " + jmsConnectionFactory.getJmsQueue() + " ja em uso! Re-tentativa de conexao em 9000 milisegundos ");
-                try {
-                    Thread.sleep(9000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            cons.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
+        } catch (javax.jms.IllegalStateException e) {
 
-        } catch (Exception e){
+            log.info("Conexao " + jmsConnectionFactory.getJmsQueue() + " ja em uso! Re-tentativa de conexao em 9000 milisegundos ");
+            try {
+
+                Thread.sleep(9000);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            this.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
+
+        } catch (Exception e) {
 
             log.error("Erro na Conexao " + jmsConnectionFactory.getJmsQueue() + " motivo erro " + e.getMessage());
             log.error("Conexao  " + jmsConnectionFactory.getJmsQueue() + " sera re-tentada em 9000 milisegundos!");
+
+
             if (session != null) {
                 try {
                     session.close();
@@ -99,50 +107,52 @@ public class ConsumerImpl {
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
-            cons.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
+            this.startConnectionFactory(fluxo, jmsConnectionFactory, jmsServerConnection);
         }
     }
 
-    public static void stopConnection(){
+    public static void stopConnection() {
 
-        if (session != null) {
-            try {
-                session.close();
-            } catch (JMSException e1) {
-                log.error("Erro ao fechar sessao  motivo erro " + e1.getMessage());
-            }
-        }
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (JMSException e2) {
-                log.error("Erro ao fechar conexao motivo erro " + e2.getMessage());
-            }
-        }
-        if (topicSubscriber != null) {
-            try {
-                topicSubscriber.close();
-            } catch (JMSException e3) {
-                log.error("Erro ao fechar conexao  motivo erro " + e3.getMessage());
-            }
-        }
-
-    }
-
-    public static HornetQConnectionFactory connectionFactory(JmsServerConnection jmsServerConnection) {
-
-        Map<String, Object> connectionParams = new HashMap<String, Object>();
-        TransportConfiguration transportConfiguration = null;
-        HornetQConnectionFactory connectionFactory = null;
-
-        connectionParams.put(org.hornetq.core.remoting.impl.netty.TransportConstants.PORT_PROP_NAME, jmsServerConnection.getUrl().split(":")[1]);
-        connectionParams.put(org.hornetq.core.remoting.impl.netty.TransportConstants.HOST_PROP_NAME, jmsServerConnection.getUrl().split(":")[0]);
 
         try {
+            session.close();
+        } catch (JMSException e1) {
+            log.error("Erro ao fechar sessao  motivo erro " + e1.getMessage());
+        }
+
+
+        try {
+            connection.close();
+        } catch (JMSException e2) {
+            log.error("Erro ao fechar conexao motivo erro " + e2.getMessage());
+        }
+
+
+        try {
+            topicSubscriber.close();
+        } catch (JMSException e3) {
+            log.error("Erro ao fechar conexao  motivo erro " + e3.getMessage());
+        }
+
+
+    }
+
+    public HornetQConnectionFactory connectionFactory(JmsServerConnection jmsServerConnection) {
+        HornetQConnectionFactory connectionFactory = null;
+        try {
+
+            Map<String, Object> connectionParams = new HashMap<String, Object>();
+            TransportConfiguration transportConfiguration = null;
+
+
+            connectionParams.put(org.hornetq.core.remoting.impl.netty.TransportConstants.PORT_PROP_NAME, jmsServerConnection.getUrl().split(":")[1]);
+            connectionParams.put(org.hornetq.core.remoting.impl.netty.TransportConstants.HOST_PROP_NAME, jmsServerConnection.getUrl().split(":")[0]);
+
+
             transportConfiguration = new TransportConfiguration(NettyConnectorFactory.class.getName(), connectionParams);
             connectionFactory = HornetQJMSClient.createConnectionFactoryWithHA(JMSFactoryType.CF, transportConfiguration);
-        }catch (Exception e){
-            ConsumerImpl consumer = new ConsumerImpl();
+        } catch (Exception e) {
+
             log.error("Erro na Conexao " + jmsServerConnection.getUrl() + " motivo erro " + e.getMessage());
             e.printStackTrace();
             log.info("Conexao " + jmsServerConnection.getUrl() + " com problemas! Re-tentativa de conexao em 9000 milisegundos ");
@@ -152,8 +162,10 @@ public class ConsumerImpl {
                 log.error("Erro na Conexao " + jmsServerConnection.getUrl() + " motivo erro " + e.getMessage());
                 log.error("Aplicaçao sera fechada!");
             }
-            consumer.connectionFactory(jmsServerConnection);
+            this.connectionFactory(jmsServerConnection);
         }
         return connectionFactory;
     }
+
+
 }

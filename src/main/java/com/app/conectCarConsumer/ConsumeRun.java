@@ -2,10 +2,10 @@ package com.app.conectCarConsumer;
 
 import com.app.bean.JmsConnectionFactory;
 import com.app.bean.JmsServerConnection;
-import com.app.helper.*;
+import com.app.helper.ConsumerImpl;
+import com.app.helper.GetProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -13,7 +13,8 @@ import java.util.HashMap;
 
 
 @Component
-public class ConsumeRun{
+
+public class ConsumeRun {
 
     private static final Log logger = LogFactory.getFactory().getInstance(ConsumeRun.class);
     private static JmsConnectionFactory jmsConnectionFactory = null;
@@ -23,7 +24,7 @@ public class ConsumeRun{
     private static ConsumerImpl consumer = new ConsumerImpl();
 
 
-   public void run(){
+    public void run() {
         {
             try {
                 logger.info("Initializing Aplicacao Consumer...................");

@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PreDestroy;
 import java.util.concurrent.*;
