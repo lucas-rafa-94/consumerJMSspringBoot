@@ -31,16 +31,16 @@ public class ConsumeRun {
                 jmsServerConnection = jmsServerProperites.get("OSA3");
 
                 Runnable passagemProcessadaConsumer = () -> {
-                    jmsConnectionFactory = jmsProperites.get("PassagemProcessadaRemoteConc1024OSA3");
-                    consumer.startConnectionFactory("PassagemProcessadaRemoteConc1024OSA3", jmsConnectionFactory, jmsServerConnection);
+                    jmsConnectionFactory = jmsProperites.get("PassagemProcessadaRemoteConc1012OSA3");
+                    consumer.startConnectionFactory("PassagemProcessadaRemoteConc1012OSA3", jmsConnectionFactory, jmsServerConnection);
                 };
                 Runnable requisitaImagemConsumer = () -> {
-                    jmsConnectionFactory = jmsProperites.get("RequisitaImagemRemoteConc1024OSA3");
-                    consumer.startConnectionFactory("RequisitaImagemRemoteConc1024OSA3", jmsConnectionFactory, jmsServerConnection);
+                    jmsConnectionFactory = jmsProperites.get("RequisitaImagemRemoteConc1012OSA3");
+                    consumer.startConnectionFactory("RequisitaImagemRemoteConc1012OSA3", jmsConnectionFactory, jmsServerConnection);
                 };
                 Runnable falhaConsumer = () -> {
-                    jmsConnectionFactory = jmsProperites.get("FalhaComunicacaoRemoteConc1024OSA3");
-                    consumer.startConnectionFactory("FalhaComunicacaoRemoteConc1024OSA3", jmsConnectionFactory, jmsServerConnection);
+                    jmsConnectionFactory = jmsProperites.get("FalhaComunicacaoRemoteConc1012OSA3");
+                    consumer.startConnectionFactory("FalhaComunicacaoRemoteConc1012OSA3", jmsConnectionFactory, jmsServerConnection);
                 };
 
                 passagemProcessadaConsumer.run();
