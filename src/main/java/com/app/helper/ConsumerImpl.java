@@ -54,9 +54,9 @@ public class ConsumerImpl {
             topic = (HornetQTopic) session.createTopic(jmsConnectionFactory.getJmsQueue());
             topicSubscriber = session.createDurableSubscriber(topic, CONECTCAR_EXTERNAL_CLIENT);
 
-            if (fluxo.equals("PassagemProcessadaRemoteConc1024OSA3")) {
+            if (fluxo.equals("PassagemProcessadaRemoteConc1020OSA3")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarPP());
-            } else if (fluxo.equals("RequisitaImagemRemoteConc1024OSA3")) {
+            } else if (fluxo.equals("RequisitaImagemRemoteConc1020OSA3")) {
                 topicSubscriber.setMessageListener(new ConsumerConectCarRI());
             } else {
                 topicSubscriber.setMessageListener(new ConsumerConectCarFC());

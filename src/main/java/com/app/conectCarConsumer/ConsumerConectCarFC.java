@@ -15,7 +15,7 @@ public class ConsumerConectCarFC implements MessageListener {
         if (message instanceof BytesMessage) {
             try {
                 LogAuditCollection logAuditCollection = new LogAuditCollection();
-                logAuditCollection.setIdConcessionaria("1024");
+                logAuditCollection.setIdConcessionaria("1020");
                 logAuditCollection.setIdOsa("3");
                 logAuditCollection.setIdTipoFluxo("5");
                 logAuditCollection.setIdPassofluxo("0");
@@ -24,7 +24,7 @@ public class ConsumerConectCarFC implements MessageListener {
                 logAuditCollection.setDsMensagem(message.toString());
                 logAuditCollection.setSequencial("0");
                 LogAuditSender.sendToQueue(logAuditCollection);
-                SendMessageFactory.sendToQueue((BytesMessage) message, "FalhaComunicacaoLocalConc1024OSA3");
+                SendMessageFactory.sendToQueue((BytesMessage) message, "FalhaComunicacaoLocalConc1020OSA3");
             } catch (Exception e) {
                 e.printStackTrace();
             }
